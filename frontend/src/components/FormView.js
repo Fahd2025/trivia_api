@@ -17,7 +17,7 @@ class FormView extends Component {
 
   componentDidMount(){
     $.ajax({
-      url: `/categories`, //TODO: update request URL
+      url: window.apiURL + `categories`, // update request URL
       type: "GET",
       success: (result) => {
         this.setState({ categories: result.categories })
@@ -34,7 +34,7 @@ class FormView extends Component {
   submitQuestion = (event) => {
     event.preventDefault();
     $.ajax({
-      url: '/questions', //TODO: update request URL
+      url: window.apiURL + 'questions', // update request URL
       type: "POST",
       dataType: 'json',
       contentType: 'application/json',
@@ -49,6 +49,7 @@ class FormView extends Component {
       },
       crossDomain: true,
       success: (result) => {
+        // alert('Question has been added successfuly');
         document.getElementById("add-question-form").reset();
         return;
       },

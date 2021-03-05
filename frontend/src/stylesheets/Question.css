@@ -12,6 +12,15 @@
   width: 60%;
 }
 
+.categories-list li{
+  cursor:pointer;
+}
+
+.categories-list li img{
+  vertical-align: middle;
+  padding-left: 8px;
+}
+
 .questions-list {
   flex-basis: 75%;
   text-align: center;
@@ -60,10 +69,12 @@ span.page-num {
   font-weight: bolder;
   text-decoration: underline;
   font-size: 16px;
+  cursor: pointer;
 }
 
 span.page-num.active {
   color: blue;
+  cursor: none;
 }
 
 img.category {
@@ -72,4 +83,5 @@ img.category {
 
 img.delete {
   width: 20px;
+  cursor: pointer;
 }

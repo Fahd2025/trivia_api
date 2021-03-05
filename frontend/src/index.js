@@ -4,6 +4,8 @@ import './stylesheets/index.css';
 import App from './App';
 import * as serviceWorker from './serviceWorker';
 
+window.apiURL = "http://localhost:5000/"
+
 ReactDOM.render(<App />, document.getElementById('root'));
 
 // If you want your app to work offline and load faster, you can change

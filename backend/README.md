@@ -66,29 +66,293 @@ One note before you delve into your tasks: for each endpoint you are expected to
 8. Create a POST endpoint to get questions to play the quiz. This endpoint should take category and previous question parameters and return a random questions within the given category, if provided, and that is not one of the previous questions. 
 9. Create error handlers for all expected errors including 400, 404, 422 and 500. 
 
-REVIEW_COMMENT
-```
-This README is missing documentation of your endpoints. Below is an example for your endpoint to get all categories. Please use it as a reference for creating your documentation and resubmit your code. 
+## Endpoints
 
-Endpoints
-GET '/categories'
-GET ...
-POST ...
-DELETE ...
-
-GET '/categories'
-- Fetches a dictionary of categories in which the keys are the ids and the value is the corresponding string of the category
-- Request Arguments: None
-- Returns: An object with a single key, categories, that contains a object of id: category_string key:value pairs. 
-{'1' : "Science",
-'2' : "Art",
-'3' : "Geography",
-'4' : "History",
-'5' : "Entertainment",
-'6' : "Sports"}
-
+### GET `/categories`
+- Fetches a dictionary of categories in which the keys are the ids and the value is the corresponding string of the category.
+- Request arguments: None.
+- A sample API response for curl -X GET http://127.0.0.1:5000/categories
+```json
+{
+  "categories": {
+    "1": "Science",
+    "2": "Art",
+    "3": "Geography",
+    "4": "History",
+    "5": "Entertainment",
+    "6": "Sports"
+  },
+  "success": true
+}
 ```
 
+### GET `/questions`
+- Fetches a list of 10 questions per page.
+- Optional url arguments: 
+  - `page` of integer type.
+- A sample API response for curl -X GET http://127.0.0.1:5000/questions
+
+```json
+{
+  "categories": {     
+    "1": "Science",   
+    "2": "Art",       
+    "3": "Geography", 
+    "4": "History",
+    "5": "Entertainment",
+    "6": "Sports"
+  },
+  "current_category": null,
+  "questions": [
+    {
+      "answer": "Apollo 13",
+      "category": 5,
+      "difficulty": 4,
+      "id": 2,
+      "question": "What movie earned Tom Hanks his third straight Oscar nomination, in 1996?"
+    },
+    {
+      "answer": "Tom Cruise",
+      "category": 5,
+      "difficulty": 4,
+      "id": 4,
+      "question": "What actor did author Anne Rice first denounce, then praise in the role of her beloved Lestat?"     
+    },
+    {
+      "answer": "Maya Angelou",
+      "category": 4,
+      "difficulty": 2,
+      "id": 5,
+      "question": "Whose autobiography is entitled 'I Know Why the Caged Bird Sings'?"
+    },
+    {
+      "answer": "Edward Scissorhands",
+      "category": 5,
+      "difficulty": 3,
+      "id": 6,
+      "question": "What was the title of the 1990 fantasy directed by Tim Burton about a young man with multi-bladed appendages?"
+    },
+    {
+      "answer": "Muhammad Ali",
+      "category": 4,
+      "difficulty": 1,
+      "id": 9,
+      "question": "What boxer's original name is Cassius Clay?"
+    },
+    {
+      "answer": "Brazil",
+      "category": 6,
+      "difficulty": 3,
+      "id": 10,
+      "question": "Which is the only team to play in every soccer World Cup tournament?"
+    },
+    {
+      "answer": "Uruguay",
+      "category": 6,
+      "difficulty": 4,
+      "id": 11,
+      "question": "Which country won the first ever soccer World Cup in 1930?"
+    },
+    {
+      "answer": "George Washington Carver",
+      "category": 4,
+      "difficulty": 2,
+      "id": 12,
+      "question": "Who invented Peanut Butter?"
+    },
+    {
+      "answer": "Lake Victoria",
+      "category": 3,
+      "difficulty": 2,
+      "id": 13,
+      "question": "What is the largest lake in Africa?"
+    },
+    {
+      "answer": "The Palace of Versailles",
+      "category": 3,
+      "difficulty": 3,
+      "id": 14,
+      "question": "In which royal palace would you find the Hall of Mirrors?"
+    }
+  ],
+  "success": true,
+  "total_questions": 21
+}
+```
+### DELETE `/questions/<int:question_id>`
+- Delete from the questions list by id.
+- Request url arguments:
+  - `question_id` of integer type.
+- A sample API response for curl -X DELETE http://127.0.0.1:5000/questions/2
+
+```json
+{
+  "success": true,
+  "deleted": 2,
+}
+```
+### POST `/questions`
+- Add a new question with answer and difficulty level for a specific category to the questions list.
+- Request json arguments:
+  - `question`of string type.
+  - `answer` of string type
+  - `difficulty` of integer type.
+  - `category` of integer type.
+- A sample API response for curl -X POST http://127.0.0.1:5000/questions -H "Content-Type: application/json" -d '{ "question": "Where were the Olympics held in 1980?", "answer": "Russia", "difficulty": 3, "category": "6" }'
+
+```json
+{
+  "created": 32,
+  "question_created": "Where were the Olympics held in 1980?",
+  "questions": [   
+    {
+      "answer": "Russia",
+      "category": 6,
+      "difficulty": 3,
+      "id": 32,
+      "question": "Where were the Olympics held in 1980?"
+    }
+  ],
+  "success": true,
+  "total_questions": 22
+}
+```
+
+### POST `/questions`
+- Search for a question.
+- Request json arguments:
+  - `searchTerm` of string type.
+- A sample API response for curl -X POST http://127.0.0.1:5000/questions -H "Content-Type: application/json" -d '{ "searchTerm": "1980"}'
+
+```json
+{
+  "questions": [
+    {
+      "answer": "Russia",
+      "category": 6,
+      "difficulty": 3,
+      "id": 32,
+      "question": "Where were the Olympics held in 1980?"
+    }
+  ],
+  "success": true,
+  "total_questions": 1
+}
+```
+
+### GET `/categories/<int:category_id>/questions`
+- Fetches the questions based on category.
+- Request url arguments:
+  - `category_id` of integer type.
+- A sample API response for curl -X GET http://127.0.0.1:5000/categories/6/questions
+
+```json
+{
+  "current_category": "Sports",
+  "questions": [
+    {
+      "answer": "Brazil",
+      "category": 6,
+      "difficulty": 3,
+      "id": 10,
+      "question": "Which is the only team to play in every soccer World Cup tournament?"
+    },
+    {
+      "answer": "Uruguay",
+      "category": 6,
+      "difficulty": 4,
+      "id": 11,
+      "question": "Which country won the first ever soccer World Cup in 1930?"
+    },
+    {
+      "answer": "Russia",
+      "category": 6,
+      "difficulty": 3,
+      "id": 32,
+      "question": "Where were the Olympics held in 1980?"
+    }
+  ],
+  "success": true,
+  "total_questions": 3
+}
+```
+
+### POST `/quizzes`
+- Fetches a question to play the quiz.
+- Request json arguments:
+  - `quiz_category` of json object with these keys (id & type).
+  - `previous_ids` of integer array type.
+- A sample API response for curl -X POST http://127.0.0.1:5000/quizzes -H "Content-Type: application/json" -d '{"previous_questions": [11], "quiz_category": {"type": "Sports", "id": "6"}}'
+
+```json
+{
+  "question": {
+    "answer": "Russia",
+    "category": 6,
+    "difficulty": 3,
+    "id": 39,
+    "question": "Where were the Olympics held in 1980?"
+  },
+  "success": true
+}
+```
+
+## Errors
+
+### Bad request error
+- A sample response.
+
+```json
+{
+  "success": false,
+  "error": 400,
+  "message": "Bad request error"
+}
+```
+
+### Resource not found
+- A sample response.
+
+```json
+{
+  "success": false,
+  "error": 404,
+  "message": "Resource not found"
+}
+```
+
+### Method not allowed
+- A sample response.
+
+```json
+{
+  "success": false,
+  "error": 405,
+  "message": "Method not allowed"
+}
+```
+
+### Unprocessable error
+- A sample response.
+
+```json
+{
+  "success": false,
+  "error": 422,
+  "message": "Unprocessable error"
+}
+```
+
+### Internal server error
+- A sample response.
+
+```json
+{
+  "success": false,
+  "error": 500,
+  "message": "Internal server error has been occured"
+}
+```
 
 ## Testing
 To run the tests, run

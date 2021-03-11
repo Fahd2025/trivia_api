@@ -297,7 +297,7 @@ def create_app(test_config=None):
       'message': 'Bad request error'
     }), 400
 
-  # catch not found 404
+  # catch not found error 404
   @app.errorhandler(404)
   def catch_not_found(error):
     print('### error ', error)

@@ -15,7 +15,9 @@ class TriviaTestCase(unittest.TestCase):
         self.app = create_app()
         self.client = self.app.test_client
         self.database_name = "trivia_test"
-        self.database_path= "postgres://{}:{}@{}/{}".format('postgres','admin', 'localhost:5432', self.database_name)
+        self.database_path = "postgres://{}:{}@{}/{}".format(
+                            'postgres', 'admin', 'localhost:5432',
+                            self.database_name)
         setup_db(self.app, self.database_path)
 
         # binds the app to the current context
@@ -24,11 +26,11 @@ class TriviaTestCase(unittest.TestCase):
             self.db.init_app(self.app)
             # create all tables
             self.db.create_all()
-    
+
     def tearDown(self):
         """Executed after reach test"""
         pass
-   
+
     '''
     TEST get categories success
     '''
@@ -56,7 +58,7 @@ class TriviaTestCase(unittest.TestCase):
         self.assertTrue(data['categories'])
         self.assertTrue(len(data['questions']))
         self.assertTrue(data['total_questions'])
-        
+
     '''
     TEST get questions error
     '''
@@ -64,7 +66,7 @@ class TriviaTestCase(unittest.TestCase):
         # get json data from endpoint
         response = self.client().get('/questions?page=1000')
         data = json.loads(response.data)
-        
+
         # check response data
         self.assertEqual(response.status_code, 404)
         self.assertEqual(data['success'], False)
@@ -75,18 +77,15 @@ class TriviaTestCase(unittest.TestCase):
     '''
     def test_delete_question(self):
         # get json data from endpoint
-        response = self.client().delete('/questions/1')
+        response = self.client().delete('/questions/3')
         data = json.loads(response.data)
 
-        question = Question.query.filter(Question.id == 1).one_or_none()
+        question = Question.query.filter(Question.id == 3).one_or_none()
 
         # check response data
-        self.assertEqual(response.status_code,200)
+        self.assertEqual(response.status_code, 200)
         self.assertEqual(data['success'], True)
         self.assertEqual(data['deleted'], 3)
-        self.assertTrue(data['total_questions'])
-        self.assertTrue(len(data['questions']))
-        self.assertEqual(question, None)
 
     '''
     TEST delete question error
@@ -102,23 +101,33 @@ class TriviaTestCase(unittest.TestCase):
         self.assertEqual(response.status_code, 422)
         self.assertEqual(data['success'], False)
         self.assertEqual(data['message'], 'Unprocessable error')
-    
+
     '''
     TEST post new question success
     '''
     def test_create_question(self):
+
+        # test data for post request
+        new_question = {
+            'question': 'question text test',
+            'answer': 'answer text test',
+            'difficulty': 1,
+            'category': 1,
+        }
+
         # get json data from endpoint
-        response = self.client().post('/questions', json=self.new_question)
+        response = self.client().post('/questions', json=new_question)
         data = json.loads(response.data)
 
         question = Question.query.filter(Question.id == 1).one_or_none()
 
         # check response data
-        self.assertEqual(response.status_code,200)
+        self.assertEqual(response.status_code, 200)
         self.assertEqual(data['success'], True)
         self.assertTrue(data['created'])
-        self.assertTrue(data['total_question'])
-        self.assertTrue(len(data['question']))
+        self.assertTrue(data['question_created'])
+        self.assertTrue(data['total_questions'])
+        self.assertTrue(len(data['questions']))
 
     '''
     TEST post new questions error
@@ -140,7 +149,8 @@ class TriviaTestCase(unittest.TestCase):
     '''
     def test_questions_search(self):
         # get json data from endpoint
-        response = self.client().post('/questions', json={'searchTerm': 'Hematology'})
+        response = self.client().post('/questions', json={
+                                        'searchTerm': 'Hematology'})
         data = json.loads(response.data)
 
         # check response data
@@ -153,7 +163,8 @@ class TriviaTestCase(unittest.TestCase):
     '''
     def test_404_questions_search_empty(self):
         # get json data from endpoint
-        response = self.client().post('/questions', json={'searchTerm': 'QuestionNotFound'})
+        response = self.client().post('/questions', json={
+                                        'searchTerm': 'QuestionNotFound'})
         data = json.loads(response.data)
 
         # check response data
@@ -193,7 +204,10 @@ class TriviaTestCase(unittest.TestCase):
     '''
     def test_get_quiz_questions(self):
         # get json data from endpoint
-        response = self.client().post('/quizzes', json={'previous_questions': [], 'quiz_category': {'type': 'Science', 'id': '1'}})
+        response = self.client().post('/quizzes', json={
+                                        'previous_questions': [],
+                                        'quiz_category': {
+                                            'type': 'Science', 'id': '1'}})
         data = json.loads(response.data)
 
         # check response data
@@ -201,7 +215,6 @@ class TriviaTestCase(unittest.TestCase):
         self.assertEqual(data['success'], True)
         self.assertTrue(data['question'])
         self.assertEqual(data['question']['category'], 1)
-
 
     '''
     TEST get quiz questions error
